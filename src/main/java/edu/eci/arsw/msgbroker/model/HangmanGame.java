@@ -27,9 +27,9 @@ public class HangmanGame {
     private String winner="";
     private boolean gameFinished=false;
 
-    public HangmanGame(String word, String guessedWord,String winner, boolean finished) {
-        this.word = word;
-        this.guessedWord = guessedWord.toCharArray();
+    public HangmanGame(String word, String gw,String winner, boolean finished) {
+        this.word = word;        
+        this.guessedWord = gw.toCharArray();
         this.winner=winner;
         this.gameFinished=finished;
     }
@@ -83,6 +83,11 @@ public class HangmanGame {
             return new String(guessedWord);
         else return word;
     }    
+
+    @Override
+    public String toString() {
+        return "HangmanGame{" + "word=" + word + ", guessedWord=" + new String(guessedWord) + ", winner=" + winner + ", gameFinished=" + gameFinished + '}';
+    }
     
     
 }

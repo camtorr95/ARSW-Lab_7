@@ -68,7 +68,8 @@ public class GameServices {
      * a una partida existente.
      */
     public String addLetter(int gameid,char letter) throws GameNotFoundException{
-        return persistence.getGame(gameid).addLetter(letter);
+        persistence.addLetter(gameid, letter);
+        return persistence.getGame(gameid).getCurrentGuessedWord();
     }
     
     /**

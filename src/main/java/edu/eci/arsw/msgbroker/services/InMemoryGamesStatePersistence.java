@@ -24,10 +24,12 @@ import org.springframework.stereotype.Service;
  *
  * @author hcadavid
  */
-@Service
+
 public class InMemoryGamesStatePersistence implements GameStatePersistence{
     
     private final ConcurrentHashMap<Integer,HangmanGame> gamesState;
+    
+    
     
     public InMemoryGamesStatePersistence(){
         gamesState=new ConcurrentHashMap<>();
@@ -72,7 +74,7 @@ public class InMemoryGamesStatePersistence implements GameStatePersistence{
         if (!gamesState.containsKey(gameid)){
             throw new GameNotFoundException("The game "+gameid+" doesnt exist.");
         }
-        else{
+        else{            
             gamesState.get(gameid).addLetter(c);
         }        
     }
