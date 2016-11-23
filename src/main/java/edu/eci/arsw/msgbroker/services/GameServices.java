@@ -95,7 +95,7 @@ public class GameServices {
      * a una partida existente.
      */
     public boolean guessWord(String playerName,int gameid,String word) throws GameNotFoundException{
-        return persistence.getGame(gameid).guessWord(playerName,word);
+        return persistence.checkWord(gameid, playerName, word);        
     }
     
     /**

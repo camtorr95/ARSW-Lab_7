@@ -28,4 +28,8 @@ public interface GameStatePersistence {
     
     public HangmanGame getGame(int gameid) throws GameNotFoundException;
     
+    public void addLetter(int gameid, char c) throws GameNotFoundException;
+    
+    public boolean checkWord(int gameid, String player,String word) throws GameNotFoundException ;
+    
 }

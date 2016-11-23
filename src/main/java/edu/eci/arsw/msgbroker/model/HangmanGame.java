@@ -27,6 +27,13 @@ public class HangmanGame {
     private String winner="";
     private boolean gameFinished=false;
 
+    public HangmanGame(String word, String guessedWord,String winner, boolean finished) {
+        this.word = word;
+        this.guessedWord = guessedWord.toCharArray();
+        this.winner=winner;
+        this.gameFinished=finished;
+    }
+    
     public HangmanGame(String word) {
         this.word=word.toLowerCase();
         guessedWord=new char[word.length()];

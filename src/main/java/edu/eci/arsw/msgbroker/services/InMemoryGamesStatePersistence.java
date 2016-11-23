@@ -66,5 +66,26 @@ public class InMemoryGamesStatePersistence implements GameStatePersistence{
         gamesState.put(3, new HangmanGame("player"));
         gamesState.put(4, new HangmanGame("winner"));        
     }
+
+    @Override
+    public void addLetter(int gameid, char c) throws GameNotFoundException {
+        if (!gamesState.containsKey(gameid)){
+            throw new GameNotFoundException("The game "+gameid+" doesnt exist.");
+        }
+        else{
+            gamesState.get(gameid).addLetter(c);
+        }        
+    }
+
+    @Override
+    public boolean checkWord(int gameid, String player,String word) throws GameNotFoundException {
+        if (!gamesState.containsKey(gameid)){
+            throw new GameNotFoundException("The game "+gameid+" doesnt exist.");
+        }
+        else{
+            return gamesState.get(gameid).guessWord(player, word);
+        }        
+        
+    }
     
 }
