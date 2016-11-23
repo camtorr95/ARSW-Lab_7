@@ -84,6 +84,23 @@ jedis.close();
 
 7. El método checkWordAndUpdateHangman realiza DOS operaciones en REDIS. Se quiere (1) que las dos se realicen atómicamente, y (2) que se garantice que si al momento de realizar la transacción el valor fue cambiado (respecto al que había al inicio de la transacción), la operación no sea realizada. Para esto, [revise el manejo de transacciones con WATCH y MULTI](https://github.com/xetorthio/jedis/wiki/AdvancedUsage).  
 
+### Nota - Error de SockJS
+
+En caso de que con la configuración planteada (aplicación y REDIS corriendo en la máquina virtual) haya conflictos con SockJS, hay dos soluciones alternativas para terminar el ejercicio:
+
+1. Configurar REDIS para aceptar conexiones desde máquinas externas, editando el archivo /etc/redis/redis.conf, y cambiando "bind 127.0.0.1" por "bind 0.0.0.0", y reiniciar el servidor (sudo reboot). OJO: Esto sólo se hará como prueba de concepto!, siempre se le debe configurar la seguridad a REDIS antes de permitirle el acceso remoto!
+
+2. Usar la misma configuración, hacer la configuración de NGINX del ejercicio anterior. No se debe olvidar agregar (al igual que en el ejercicio anterior) el permiso para aceptar orígenes alternativos:
+
+```java
+@Override
+public void registerStompEndpoints(StompEndpointRegistry registry) {
+    registry.addEndpoint("/stompendpoint").setAllowedOrigins("*").withSockJS();
+
+}
+```
+
+
 ### Parte IV - Para el Martes, Impreso. 
 
 
