@@ -74,14 +74,17 @@ jedis.close();
 	4. Retornar verdadero o falso, según corresponda.
 
 
-7. El anterior método realiza DOS operaciones en REDIS. Se quiere (1) que las dos se realicen atómicamente, y (2) que se garantice que si al momento de realizar la transacción el valor fue cambiado (respecto al que había al inicio de la transacción), la operación no sea realizada. Para esto, [revise el manejo de transacciones con WATCH y MULTI](https://github.com/xetorthio/jedis/wiki/AdvancedUsage).
-
 8. Ajuste la configuración de la aplicación para que a la lógica, en lugar de inyectársele la persistencia en memoria, se le inyecte la persistencia basad en REDIS.
 
 9. Ejecute la aplicación en su máquina virtual, y verifique el funcionamiento de la misma (1) en el navegador, y (2) consultando las entradas de tipo HASH creadas incialmente mediante el cliente de REDIS.
 
 10. Agregue unas nuevas partidas a REDIS (igual que en la parte I), pero poniéndole a éstas un [tiempo de expiración corto](http://www.redis.io/commands/expire) (por ejemplo 1 minuto). Pruebe de nuevo el funcionamiento de la aplicación. Qué ocurre en este caso?
 
-### Parte III. Para el Martes.
+### Parte III. 
+
+7. El método checkWordAndUpdateHangman realiza DOS operaciones en REDIS. Se quiere (1) que las dos se realicen atómicamente, y (2) que se garantice que si al momento de realizar la transacción el valor fue cambiado (respecto al que había al inicio de la transacción), la operación no sea realizada. Para esto, [revise el manejo de transacciones con WATCH y MULTI](https://github.com/xetorthio/jedis/wiki/AdvancedUsage).  
+
+### Parte IV - Para el Martes, Impreso. 
+
 
 Actualizar (y corregir) el diagrama realizado en el laboratorio anterior.
