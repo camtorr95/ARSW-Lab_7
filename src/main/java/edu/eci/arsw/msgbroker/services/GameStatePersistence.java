@@ -61,6 +61,7 @@ public interface GameStatePersistence {
      *      ganador
      * @throws GameNotFoundException si no hay un juego con el identificador dado
      */
-    public boolean checkWord(int gameid, String player,String word) throws GameNotFoundException ;
+    public boolean checkWordAndUpdateHangman(int gameid, String player,String word) throws GameNotFoundException ;
+    
     
 }

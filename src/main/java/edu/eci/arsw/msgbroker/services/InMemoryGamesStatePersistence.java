@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  *
  * @author hcadavid
  */
-
+@Service
 public class InMemoryGamesStatePersistence implements GameStatePersistence{
     
     private final ConcurrentHashMap<Integer,HangmanGame> gamesState;
@@ -80,7 +80,7 @@ public class InMemoryGamesStatePersistence implements GameStatePersistence{
     }
 
     @Override
-    public boolean checkWord(int gameid, String player,String word) throws GameNotFoundException {
+    public boolean checkWordAndUpdateHangman(int gameid, String player,String word) throws GameNotFoundException {
         if (!gamesState.containsKey(gameid)){
             throw new GameNotFoundException("The game "+gameid+" doesnt exist.");
         }

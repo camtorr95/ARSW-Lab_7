@@ -33,8 +33,8 @@ public class GameServices {
     @Autowired
     GameStatePersistence persistence;
 
-    private String[] words;
-    private Random random;
+    private final String[] words;
+    private final Random random;
 
     public GameServices() {
         random=new Random(System.currentTimeMillis());
@@ -96,7 +96,7 @@ public class GameServices {
      * a una partida existente.
      */
     public boolean guessWord(String playerName,int gameid,String word) throws GameNotFoundException{
-        return persistence.checkWord(gameid, playerName, word);        
+        return persistence.checkWordAndUpdateHangman(gameid, playerName, word);        
     }
     
     /**

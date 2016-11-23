@@ -102,15 +102,14 @@ public class GamesResourceController {
     public ResponseEntity<?> tryWord(@PathVariable Integer gameid,@PathVariable String playerid,@RequestBody String word){
         try {
             word=word.substring(1,word.length()-1);
-            System.out.println("word: "+word);
-            synchronized(gameServices){
-                boolean end =gameServices.guessWord(playerid,gameid,word);
-                if(end){
-                    System.out.println("ganó");
-                    msgt.convertAndSend("/topic/winner."+gameid,playerid);
-                    msgt.convertAndSend("/topic/wupdate." + gameid, word);
-                }
+            System.out.println("word: " + word);
+            boolean end = gameServices.guessWord(playerid, gameid, word);
+            if (end) {
+                System.out.println("ganó");
+                msgt.convertAndSend("/topic/winner." + gameid, playerid);
+                msgt.convertAndSend("/topic/wupdate." + gameid, word);
             }
+
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (GameNotFoundException ex) {
             return new ResponseEntity<>(ex.getLocalizedMessage(),HttpStatus.NOT_FOUND);
