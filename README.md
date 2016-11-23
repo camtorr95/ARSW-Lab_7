@@ -88,7 +88,7 @@ jedis.close();
 
 En caso de que con la configuración planteada (aplicación y REDIS corriendo en la máquina virtual) haya conflictos con SockJS, hay dos soluciones alternativas para terminar el ejercicio:
 
-1. Configurar REDIS para aceptar conexiones desde máquinas externas, editando el archivo /etc/redis/redis.conf, y cambiando "bind 127.0.0.1" por "bind 0.0.0.0", y reiniciar el servidor (sudo reboot). OJO: Esto sólo se hará como prueba de concepto!, siempre se le debe configurar la seguridad a REDIS antes de permitirle el acceso remoto!. Una vez hecho esto, en la aplicación ajustar el archivo jedis.properties, poner la IP de la máquina virtual (en lugar de 127.0.0.1), y ejecutarla desde el equipo real (en lugar del virtual).
+1. Configurar REDIS para aceptar conexiones desde máquinas externas, editando el archivo /etc/redis/redis.conf, y cambiando "bind 127.0.0.1" por "bind 0.0.0.0", y reiniciar el servidor (sudo reboot). Una vez hecho esto, en la aplicación ajustar el archivo jedis.properties, poner la IP de la máquina virtual (en lugar de 127.0.0.1), y ejecutarla desde el equipo real (en lugar del virtual). ** OJO: Esto sólo se hará como prueba de concepto!, siempre se le debe configurar la seguridad a REDIS antes de permitirle el acceso remoto!. **
 
 2. Usar la misma configuración, hacer la configuración de NGINX del ejercicio anterior. No se debe olvidar agregar (al igual que en el ejercicio anterior) el permiso para aceptar orígenes alternativos:
 
