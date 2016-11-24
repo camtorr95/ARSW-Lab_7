@@ -109,4 +109,4 @@ public void registerStompEndpoints(StompEndpointRegistry registry) {
 ### Parte IV - Para el Martes, Impreso. 
 
 
-Actualizar (y corregir) el diagrama realizado en el laboratorio anterior, incluyendo el diagrama de despliegue de la solución incluyendo REDIS. Si la herramienta de diseño no permite hacer diagramas de despliegue incluyendo componentes con puertos, hacer dos diagramas a parte: componentes detallado, y despliegue, con los componentes 'grandes'.
+Actualizar (y corregir) el diagrama realizado en el laboratorio anterior, incluyendo el diagrama de despliegue de la solución incluyendo la base de datos en memoria. Si la herramienta de diseño no permite hacer diagramas de despliegue incluyendo componentes con puertos, hacer dos diagramas aparte: componentes detallado, y despliegue, con los componentes 'grandes'.
