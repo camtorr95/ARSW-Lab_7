@@ -67,7 +67,13 @@ Como se observó en el ejercicio anterior, esta aplicación tiene el defecto de 
 
 10. Ajuste las anotaciones para que la aplicación inyecte el esquema de Caché basado en Redis en lugar del basado sólo en memoria.
 
-11. Actualice la aplicación en el esquema de balanceo de carga, y rectifique nuevamente el funcionamiento. Para esto debe tener una instancia de Redis en una de las máquinas virtuales, y ambas instancias de la aplicación configuradas para hacer uso de la misma.
+11. Verifique el funcionamiento de la aplicación (usando sólo una instancia de la misma).
+
+11. Agruegue el manejo de excepciones donde haga falta, para que si se presentan errores al intentar acceder a una llave de Redis (por errores de conexión o porque la llave no existe), las mismas se escalen hasta el API, y se muestren en el cliente a manera de un mensaje de error legible.
+
+12. Actualice la aplicación en el esquema de balanceo de carga, y rectifique nuevamente el funcionamiento. Para esto debe tener una instancia de Redis en una de las máquinas virtuales, y ambas instancias de la aplicación configuradas para hacer uso de la misma.
+
+
 
 
 ### Nota - Error de SockJS
@@ -93,7 +99,13 @@ Una vez hecho esto, en la aplicación ajustar el archivo jedis.properties, poner
 	```
 -->
 
-### Parte IV - Para el Martes, Impreso. 
 
+## Parte II 
 
-Actualizar (y corregir) el diagrama realizado en el laboratorio anterior, incluyendo el diagrama de despliegue de la solución incluyendo la base de datos en memoria. Si la herramienta de diseño no permite hacer diagramas de despliegue incluyendo componentes con puertos, hacer dos diagramas aparte: componentes detallado, y despliegue, con los componentes 'grandes'.
+Revise: dentro de la implementación hecha (en la clase RedisHangmanGame), se pueden presentar condiciones de carrera. Por qué y cual es la región crítica?.
+
+Para resolver lo anterior, revise [el ejemplo de la sección 9 de este artículo](https://www.javacodegeeks.com/2015/09/spring-data-and-redis.html) cómo implementar un esquema de bloqueo 'optimista' haciendo uso de WATCH y cómo crear transacciones con MULTI. Sin embargo, tenga presente que NO ES POSIBLE ejecutar la lógica hecha en Java (la que analiza qué si hay letras para destapar o no) dentro de la misma. 
+
+Para poder poner operaciones más avanzada dentro de una transacción, es posible agregar _scripts_ en el [lenguaje de programación LUA](https://www.lua.org/manual/5.1/manual.html), y agregar la ejecución de los mismos dentro de una transacción (un 'MULTI') de Redis, tal [como se muestra en la sección 4.11 de la documentación de REDIS](https://docs.spring.io/spring-data/redis/docs/1.4.0.RC1/reference/html/redis.html).
+
+Recuerde que si los elementos del lenguaje Lua son suficientes para realizar la actualización de la palabra, una alternativa es cambiar la representación de la información. Por ejemplo, guardando las palabras, caracter por caracter, en una lista LSET/LGET.
