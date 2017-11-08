@@ -1,88 +1,74 @@
 ### Escuela Colombiana de Ingeniería
 ### Arquitecturas de Software - ARSW
-## Ejercicio - Cachés y Bases de datos NoSQL
+## Ejercicio - Bases de datos NoSQL - Parte 1 (Llave/Valor)
 
-En este ejercicio se va a retomar la aplicación del 'ahorcado en línea', el cual ya está implementado usando una base de datos en memoria. 
+En este ejercicio se va a retomar la aplicación del 'ahorcado en línea':
 
-![](img/ServicesLayer.png)
+![](img/ClassDiagram.png)
 
-En este ejericicio, se realizará un primer paso para hacer escalable esta aplicación, ya que la misma no funcionaría bien al ser replicada y montada bajo un esquema de balanceo de carga (por mantener el estado de las partidas en cada instancia del servidor). Por esta razón, usted hara una nueva implementación de GameStatePersistence: REDISGameStatePersistence.
+Como se observó en el ejercicio anterior, esta aplicación tiene el defecto de guardar datos provisionales (el estado de los 'ahorcados') en un mapa dentro de la memoria del servidor, lo cual crea inconsistencias cuando varias instancias de la misma son montadas bajo un esquema de balanceo de carga.
 
 ## Parte I
 
-1. Inicie la máquina virtual Ubuntu trabajada anteriormente, e instale el servidor REDIS [siguiendo estas instrucciones](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis), sólo hasta 'sudo make install'. Con esto, puede iniciar el servidor con 'redis-server'. Nota: para poder hacer 'copy/paste' en la terminal (la de virtualbox no lo permite), haga una conexión ssh desde la máquina real hacia la virtual.
+1. Inicie una de las máquina virtuales Ubuntu trabajada anteriormente, e <!--instale el servidor REDIS [siguiendo estas instrucciones](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis), sólo hasta 'sudo make install'. Con esto, puede --> inicie el servidor con 'redis-server'. Nota: para poder hacer 'copy/paste' en la terminal (la de virtualbox no lo permite), haga una conexión ssh desde la máquina real hacia la virtual.
         
-2. Revise [en la documentación de REDIS](http://redis.io/topics/data-types) el tipo de dato HASH, y la manera como se agregan tablas hash a una determianda llave. Con esto presente, inicie un cliente redis (redis-cli) en su máquina virtual, y cree varias llaves, cada una asociada a cuatro tuplas (llave-valor) correspondientes: la palabra a adivinar, lo que se ha adivinado de la palabra hasta ahora, el ganador, y si la partida ha finalizado. Use como llave de los HASH una cadena compuesta, que incluya el identificador de la partida, por ejemplo: "partida:12345", "partida:9999", etc.    
+2. Como la aplicación aún no tiene la interfaz para crear nuevas partidas, se registrarán unas existentes directamente en Redis. Para esto revise [en la documentación de REDIS](http://redis.io/topics/data-types) el tipo de dato HASH, y la manera como se agregan tablas hash a una determianda llave. Con esto presente, inicie un cliente redis (redis-cli) en su máquina virtual, y usando los comandos respectivos, cree tres 'hash', uno para cada partida, identificados con la clave "game:1", "game:2", "game:3" (o con los identificadores que usted prefiera). A su vez, cada uno de los 'hash' anteriores debe tener: 
+	* La palabra completa
+	* La palabra que está siendo descubierta (la que tiene un '_' en lugar de los caracteres no adivinados aún).
+	* Si el juego fue finalizado o no.
+	* El nombre del ganador.
+
+
 
 3. Agregue las dependencias requeridas para usar Jedis, un cliente Java para REDIS:
 
 	```xml
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>                
  	```                               
 
+4. En la ruta src/main/resources agregue un archivo application.yml con la siguiente configuración (DEBE incluír las tabulaciones):
 
-4. Copie la siguiente clase y archivo de configuración (en las rutas respectivas) dentro de su proyecto (éstas ya tiene la configuración para manejar un pool de conexiones al REDIS):
+	```yml
+        spring:
+  			redis:
+    			host: 127.0.0.1
+    			port: 6379
+    			#password:
+ 	```                               
+5. Ahora, va a hacer la implementación del 'GameStateRedisCache' siguiendo el esquema planteado en el diagrama anterior, donde:
 
-	* [https://github.com/hcadavid/jedis-examples/blob/master/src/main/java/util/JedisUtil.java](https://github.com/hcadavid/jedis-examples/blob/master/src/main/java/util/JedisUtil.java)
-	* [https://github.com/hcadavid/jedis-examples/blob/master/src/main/resources/jedis.properties](https://github.com/hcadavid/jedis-examples/blob/master/src/main/resources/jedis.properties)
-   
+	* Se creará la clase GameStateRedisCache.
+	* Se creará la clase HangmanRedisGame, que heredará y SOBREESCRIBIRÁ todos los métodos de la clase HangmanGame.
 
+6. Haga que a la clase GameStateRedisCache se le inyecte el 'StringRedisTempalte':
 
-## Parte II
+ 	```java
+    @Autowired
+    private StringRedisTemplate template;    
+ 	```    
 
-Revise cómo [usar Jedis para realizar operaciones con HASH (HMGET) de REDIS](https://xicojunior.wordpress.com/2013/08/09/using-redis-hash-with-jedis/). A partir de esto, haga la nueva implemenación de GameStatePersistence (REDISGameStatePersistence), teniendo en cuenta que cada operación con Jedis se inicia obteniendo una de las conexiones del pool de conexiones, y se finaliza liberando dicha conexión:
+7. Haga que la clase HangmanRedisGame tenga como atributos adicionales (a los heredados) el identificador de la partida y el 'template' de redis, e incluya un constructor que permita inicializarlos.
 
-```java
+8. Redefina todos los métodos heredados de la clase HangmanRedisGame (tryWord, addLetter, etc), para que en lugar de usar los valores almacenados en los atributos, haga uso de los valores almacenados en en caché, teniendo en cuenta el identificador de la partida. Tenga en cuenta [el API de Spring para el manejo del 'template' de Redis para Spring](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/StringRedisTemplate.html):
 
-Jedis jedis = JedisUtil.getPool().getResource();
-	    
-	//Operaciones	    
-	    
-jedis.close();
-	    
-```
+ 	```java
+	//consultar el valor en un hash
+    String value=(String)template.opsForHash().get(key, property);           
+	
+	//actualizar el valor en un hash
+	template.opsForHash().put(key,value,property)
 
+ 	```    
 
-1. Implemente el método getGame, de manera que éste consulte los datos actuales de la partida indicada en REDIS, y a partir de los mismos cree y retorne una instancia de HangmanGame.
+9. Una vez hecho lo anterior, haga que el método getGame() de _GameStateRedisCache_ retorne una instancia de HangmanRedisGame, a la cual se le pase el identificador y el 'template' de Redis.
 
-2. Implemente el método addLetter, teniendo en cuenta que el mismo debería:
-    
-	1. Reconstruir la versión actual de HangmanGame
-	2. Agregarle la letra al HangmanGame
-	3. Obtener del objeto HangmanGame la nueva versión de la palabra que se ha adivinado hasta ahora (es decir, la palabra con nuevas letras descubiertas), y actualizar esto el HASH de REDIS.
+10. Ajuste las anotaciones para que la aplicación inyecte el esquema de Caché basado en Redis en lugar del basado sólo en memoria.
 
+11. Actualice la aplicación en el esquema de balanceo de carga, y rectifique nuevamente el funcionamiento. Para esto debe tener una instancia de Redis en una de las máquinas virtuales, y ambas instancias de la aplicación configuradas para hacer uso de la misma.
 
-
-6. Implemente el método checkWordAndUpdateHangman, de manera que éste valide la palabra, y en caso de que sea la esparada, actualice el estado del juego en REDIS: 
- 	
-	1. Reconstruir la versión actual de HangmanGame.
-	2. A través del método 'guessWord' de HangmanGame, veririficar si la palabra fue adivinada correctamente.
-	3. Si fue adivinada correctamente, actualizar el nombre del ganador y cambiar el estado del juego a finalizado.
-	4. Retornar verdadero o falso, según corresponda.
-
-
-8. Ajuste la configuración de la aplicación para que a la lógica, en lugar de inyectársele la persistencia en memoria, se le inyecte la persistencia basad en REDIS.
-
-9. Ejecute la aplicación en su máquina virtual, y verifique el funcionamiento de la misma (1) en el navegador, y (2) consultando las entradas de tipo HASH creadas incialmente mediante el cliente de REDIS.
-
-10. Agregue unas nuevas partidas a REDIS (igual que en la parte I), pero poniéndole a éstas un [tiempo de expiración corto](http://www.redis.io/commands/expire) (por ejemplo 1 minuto). Pruebe de nuevo el funcionamiento de la aplicación. Qué ocurre en este caso?
-
-### Parte III. 
-
-7. El método checkWordAndUpdateHangman realiza DOS operaciones en REDIS. Se quiere (1) que las dos se realicen atómicamente, y (2) que se garantice que si al momento de realizar la transacción el valor fue cambiado (respecto al que había al inicio de la transacción), la operación no sea realizada. Para esto, [revise el manejo de transacciones con WATCH y MULTI](https://github.com/xetorthio/jedis/wiki/AdvancedUsage).  
 
 ### Nota - Error de SockJS
 
