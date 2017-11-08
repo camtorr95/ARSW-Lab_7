@@ -59,7 +59,7 @@ Como se observó en el ejercicio anterior, esta aplicación tiene el defecto de 
     String value=(String)template.opsForHash().get(key, property);           
 	
 	//actualizar el valor en un hash
-	template.opsForHash().put(key,value,property)
+	template.opsForHash().put(key,property,value)
 
  	```    
 
