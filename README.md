@@ -32,11 +32,11 @@ Como se observó en el ejercicio anterior, esta aplicación tiene el defecto de 
 4. En la ruta src/main/resources agregue un archivo application.yml con la siguiente configuración (DEBE incluír las tabulaciones):
 
 	```yml
-        spring:
-  			redis:
-    			host: 127.0.0.1
-    			port: 6379
-    			#password:
+    spring:
+	    redis:
+	        host: 127.0.0.1
+	        port: 6379
+            #password:
  	```                               
 5. Ahora, va a hacer la implementación del 'GameStateRedisCache' siguiendo el esquema planteado en el diagrama anterior, donde:
 
