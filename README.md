@@ -187,7 +187,14 @@ public User findById(Integer id);
 * Modifique la clase User para que tenga una colección de Puntajes.
 
 
+
+[Revise la sintaxis de $elemMatch](https://docs.mongodb.com/manual/reference/operator/query/elemMatch/), y pruebela en la terminal de consultas de mLab:
+
 ![](img/mlabsearch.png)
 
+Revise la sección 6.3.2 [de la documentación de Spring](https://docs.spring.io/spring-data/data-document/docs/current/reference/html/#d0e3309), para agregar operaciones a un repositorio a partir de consultas. Sobre la base de lo anterior, agregue un método al repositorio de usuarios.
 
+Haga que en la vista:
 
+1. Se muestre el último puntaje obtenido por el usuario, una vez consultado.
+2. Se muestren los usuarios que han obtenido puntajes mayores a 100.
