@@ -114,45 +114,68 @@ Recuerde que si los elementos del lenguaje Lua son suficientes para realizar la 
 
 ## Parte III
 
-
+Para finalizar el ejercicio, se va a sustituír el 'bean' (repositorio) encargado de la persistencia de los usuarios del sistema, por uno que realice la misma en una base de datos NoSQL documental. Para esto, se usará el componente 'spring-data' de Spring de acuerdo con el siguiente diagrama:
 
 ![](img/ClassDiagram2.png)
 
+Para hacer esto:
+
+1. Regístrese y cree una base de datos MongoDB en [mLab](https://mlab.com).
+
+2. En la base de datos, cree una colección para usuarios, y en la misma registre uno o dos documentos compatibles con la entidad 'User' usada en la aplicación
+
+	![](img/mlab.png)
+
+	Por ejemplo:
+
+	```javascript
+	{
+		"_id": 112233,
+		"name": "Maria Perez MongoDB",
+		"photoUrl": "http://www.your3dsource.com/images/facepic1.jpeg"
+	}
+	```
 
 
-```java
-@Document(collection = "users")
-public class User {
+3. En su proyecto, agregue la dependencia starter-data-mongodb:
+
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
 ```
 
-```java
-    @Id
-    private int id;
-```
+4. A la clase usuario agregue la anotación @Document (a nivel de clase) para indicar que la misma podrá hacerse persistente en una base de datos documental, agregando la propiedad 'collection' para indicar en qué colección de la base de datos se registrará su documento JSON correspondiente:
 
-Ejemplo:
+	```java
+	@Document(collection = "users")
+	public class User {
+	```
 
-Crear registros:
+	Adicionalmente, agregue la anotación @Id a aquel atributo correspondiente al identificador del documento:
 
-![](img/mlab.png)
+	```java
+		@Id
+		private int id;
+	```
 
+5. Para que en esta nueva versión de la aplicación en las dependencias a 'UserRepository' se inyecte una implementación de la persistencia usando MongoDB, haga que la interfaz herede de MongoRepository:
 
-```javascript
-{
-    "_id": 112233,
-    "name": "Maria Perez MongoDB",
-    "photoUrl": "http://www.your3dsource.com/images/facepic1.jpeg"
-}
-```
+	```java
+	public interface UsersRepository extends MongoRepository<User, Integer>{
+		...
+	}
 
-```java
-public interface UsersRepository extends MongoRepository<User, Integer>{
-	...
-}
+	```
 
-```
+6. Remueva la anotación @Service del 'stub' de UserRepository usado en la versión anterior del ejercicio.
 
-* Agregar parámetros:
+7. Agregue los parámetros de conexión a la base de datos mongodb Tenga en cuenta que el usuario y contraseña NO son los usados para autenticarse en mLabs, sino aquellos creados específicamente para la base de datos:
+
+	![](img/mlabsusers.png). 
+
+* Parámetros (application.yml):
 
 	```yml
     spring:
@@ -163,38 +186,48 @@ public interface UsersRepository extends MongoRepository<User, Integer>{
           database: xxxxxx
           username: yyyyyy
           password: zzzzzz  	
-	    redis:
-	        host: 127.0.0.1
-	        port: 6379
+    redis:
+      host: 127.0.0.1
+      port: 6379
 	```                               
 
 
-
-
-
-[La convención de nombres para consultas:](https://docs.spring.io/spring-data/data-document/docs/current/reference/html/#mongodb.repositories.queries)
-        
+7. La semántica de los componentes de Spring-Data para MyBatis [depende de una convención de nombres tanto de los métodos como de sus parámetros](https://docs.spring.io/spring-data/data-document/docs/current/reference/html/#mongodb.repositories.queries). Teniendo en cuenta esto, cambie el nombre del método usado para buscar un usuario a partir de su identificador (y por ahora elimine los demás métodos, para evitar conflictos):
 
 ```java
 public User findById(Integer id);   
 ```
 
+8. Ejecute la aplicación y verifique que la consulta de clientes se haga correctamente.
 
-* Agregar una clase Score, que tenga: fecha del puntaje, y valor de puntaje.
+## Parte IV
 
-* Actualice los documentos para que contengan un puntaje.
+Suponga que los usuarios, en adelante, tendrán un puntaje asociado a sus juegos. Por ahora no se implementará el registro de los puntajes en sí, pero sí serán consultados.
 
-* Modifique la clase User para que tenga una colección de Puntajes.
+1. Agregue al modelo una clase Score, que tenga: fecha de obtencuón puntaje, y valor de puntaje.
 
+2. Haga la clase User tenga una colección de Score.
 
+3. A través de la interfaz de mLab modifique los documentos existentes (usuarios) para que contengan la respectiva colección de puntajes. En las mismas agregue dos o trés puntajes en fechas diferentes.
 
-[Revise la sintaxis de $elemMatch](https://docs.mongodb.com/manual/reference/operator/query/elemMatch/), y pruebela en la terminal de consultas de mLab:
+4. Al Repositorio de Usuarios (UserRepository) agregue un método que permita consultar aquellos usuarios que tengan puntajes mayores que N. Para esto:
 
-![](img/mlabsearch.png)
+* revise [la sintaxis de $elemMatch](https://docs.mongodb.com/manual/reference/operator/query/elemMatch/), y pruebela en la terminal de consultas de mLab:
 
-Revise la sección 6.3.2 [de la documentación de Spring](https://docs.spring.io/spring-data/data-document/docs/current/reference/html/#d0e3309), para agregar operaciones a un repositorio a partir de consultas. Sobre la base de lo anterior, agregue un método al repositorio de usuarios.
+	![](img/mlabsearch.png)
+
+* Revise la sección 6.3.2 [de la documentación de Spring](https://docs.spring.io/spring-data/data-document/docs/current/reference/html/#d0e3309), para agregar operaciones a un repositorio a partir de consultas. Sobre la base de lo anterior, agregue un método al repositorio de usuarios.
 
 Haga que en la vista:
 
 1. Se muestre el último puntaje obtenido por el usuario, una vez consultado.
 2. Se muestren los usuarios que han obtenido puntajes mayores a 100.
+
+
+## Entrega
+
+1. Asegúrese de que la copia del proyecto que entregará quede configurado para funcionar con el middleware de mensajería, el servidor MongoDB en la nube, y el servidor REDIS local.
+
+2. En el directorio raíz de su proyecto, incluya un archivo INSTRUCCIONES.txt, indicando qué llaves se deben tener en el servidor REDIS para el correcto funcionamiento de la aplicación.
+
+3. Comprima y suba el proyecto. No olvide que el ZIP debe incluír copia del repositorio (folder .git).
