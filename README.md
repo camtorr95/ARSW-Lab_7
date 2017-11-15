@@ -109,3 +109,85 @@ Para resolver lo anterior, revise [el ejemplo de la sección 9 de este artículo
 Para poder poner operaciones más avanzada dentro de una transacción, es posible agregar _scripts_ en el [lenguaje de programación LUA](https://www.lua.org/manual/5.1/manual.html), y agregar la ejecución de los mismos dentro de una transacción (un 'MULTI') de Redis, tal [como se muestra en la sección 4.11 de la documentación de REDIS](https://docs.spring.io/spring-data/redis/docs/1.4.0.RC1/reference/html/redis.html).
 
 Recuerde que si los elementos del lenguaje Lua son suficientes para realizar la actualización de la palabra, una alternativa es cambiar la representación de la información. Por ejemplo, guardando las palabras, caracter por caracter, en una lista LSET/LGET.
+
+
+
+## Parte III
+
+
+
+![](img/ClassDiagram2.png)
+
+
+
+```java
+@Document(collection = "users")
+public class User {
+```
+
+```java
+    @Id
+    private int id;
+```
+
+Ejemplo:
+
+Crear registros:
+
+![](img/mlab.png)
+
+
+```javascript
+{
+    "_id": 112233,
+    "name": "Maria Perez MongoDB",
+    "photoUrl": "http://www.your3dsource.com/images/facepic1.jpeg"
+}
+```
+
+```java
+public interface UsersRepository extends MongoRepository<User, Integer>{
+	...
+}
+
+```
+
+* Agregar parámetros:
+
+	```yml
+    spring:
+      data:
+        mongodb:
+          host: xxxxxx.mlab.com
+          port: 37101
+          database: xxxxxx
+          username: yyyyyy
+          password: zzzzzz  	
+	    redis:
+	        host: 127.0.0.1
+	        port: 6379
+	```                               
+
+
+
+
+
+[La convención de nombres para consultas:](https://docs.spring.io/spring-data/data-document/docs/current/reference/html/#mongodb.repositories.queries)
+        
+
+```java
+public User findById(Integer id);   
+```
+
+
+* Agregar una clase Score, que tenga: fecha del puntaje, y valor de puntaje.
+
+* Actualice los documentos para que contengan un puntaje.
+
+* Modifique la clase User para que tenga una colección de Puntajes.
+
+
+![](img/mlabsearch.png)
+
+
+
