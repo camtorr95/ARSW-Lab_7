@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.eci.arsw.collabhangman.cache.stub;
+package edu.eci.arsw.collabhangman.cache.redis;
 
 import edu.eci.arsw.collabhangman.cache.GameStateCache;
 import edu.eci.arsw.collabhangman.services.GameCreationException;

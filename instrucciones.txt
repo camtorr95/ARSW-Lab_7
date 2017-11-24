@@ -1,0 +1,7 @@
+Balanceador de Carga: RabbitMQ
+
+Redis:  key: game:1 , game:2 etc...
+        word
+        finished
+        winner
+        guessedword

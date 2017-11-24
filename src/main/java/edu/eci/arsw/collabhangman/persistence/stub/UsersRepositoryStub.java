@@ -9,17 +9,20 @@ import edu.eci.arsw.collabhangman.model.game.entities.User;
 import edu.eci.arsw.collabhangman.persistence.PersistenceException;
 import edu.eci.arsw.collabhangman.persistence.UsersRepository;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 /**
  *
  * @author hcadavid
  */
-@Service
-public class UsersRepositoryStub implements UsersRepository{
+public class UsersRepositoryStub{
 
     private static Map<Integer,User> usersdb;
     
@@ -30,7 +33,6 @@ public class UsersRepositoryStub implements UsersRepository{
         usersdb.put(334455, new User(334455,"Pedro Rodriguez","http://www.your3dsource.com/images/facepic5.jpeg"));
     }
 
-    @Override
     public User getUserByID(Integer id) throws PersistenceException {
         if (!usersdb.containsKey(id)){
             throw new PersistenceException("User not found:"+id);
@@ -40,11 +42,7 @@ public class UsersRepositoryStub implements UsersRepository{
         }
     }
 
-    @Override
     public Set<User> getAllUsers() {
         return new LinkedHashSet<>(usersdb.values());
     }
-    
-
-    
 }

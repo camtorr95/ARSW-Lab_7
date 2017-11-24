@@ -1,5 +1,11 @@
 spring:
-    redis:
-        host: 127.0.0.1
-        port: 6379
-        #password:
+    data:
+        mongodb:
+        host: ds145800.mlab.com
+        port: 45800
+        database: base-arsw-torres
+        username: arsw-dbuser1
+        password: 123456789
+redis:
+    host: 127.0.0.1
+    port: 6379
